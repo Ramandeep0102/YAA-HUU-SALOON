@@ -1,0 +1,6 @@
+{
+  "name": "Yaa-Huu Salon",
+  "description": "Unlock your beauty potential at Yaa-Huu Salon, the premier luxury styling sanctuary at S.B.P City Center, Landran, Mohali. Book custom hair styling, nail couture, clinical skin hydrafacials, and bridal makeups 24/7.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
