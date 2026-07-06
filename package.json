@@ -1,5 +1,6 @@
 {
-  "name": "react-example",
+  "name": "yaa-huu-saloon",
+  "description": "Yaa-Huu Saloon - Luxury Hair Styling, Haircut & Grooming Bookings",
   "private": true,
   "version": "0.0.0",
   "type": "module",
