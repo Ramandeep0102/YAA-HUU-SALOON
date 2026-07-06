@@ -34,6 +34,11 @@ export interface Appointment {
   clientName: string;
   clientPhone: string;
   clientEmail: string;
+  status?: 'pending' | 'confirmed' | 'cancelled';
+  totalPrice?: number;
+  advanceAmount?: number;
+  paymentStatus?: 'success' | 'failed' | 'pending';
+  paymentReference?: string;
   createdAt: string;
 }
 

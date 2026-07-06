@@ -7,6 +7,7 @@ import Services from './pages/Services';
 import LookbookPage from './pages/LookbookPage';
 import ReviewsPage from './pages/ReviewsPage';
 import BookPage from './pages/BookPage';
+import AdminDashboard from './pages/AdminDashboard';
 import { Appointment } from './types';
 
 function ScrollToTop() {
@@ -70,6 +71,7 @@ export default function App() {
               />
             } 
           />
+          <Route path="/admin" element={<AdminDashboard />} />
         </Route>
       </Routes>
     </>
