@@ -32,7 +32,6 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
   };
 
   const servicePrice = selectedService ? parsePrice(selectedService.price) : 0;
-  const advanceAmount = servicePrice ? Number((servicePrice / 3).toFixed(2)) : 0;
 
   const formatCurrency = (value: number) =>
     new Intl.NumberFormat('en-IN', {
@@ -41,14 +40,6 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
       maximumFractionDigits: 0,
     }).format(value);
 
-  const simulateAdvancePayment = async (amount: number) => {
-    await new Promise((resolve) => setTimeout(resolve, 1200));
-    return {
-      status: 'success' as const,
-      reference: `SIMPAY-${Date.now()}`,
-    };
-  };
-
   const notifyAdminSms = async (name: string, treatment: string) => {
     try {
       await fetch('/api/admin-sms', {
@@ -56,7 +47,7 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           to: '8437530713',
-          message: `New Appointment Alert! Customer ${name} has booked ${treatment} and paid 1/3 advance. Please review and confirm on your admin dashboard.`,
+          message: `New Appointment Alert! Customer ${name} has booked ${treatment}. Please review and confirm on your admin dashboard.`,
         }),
       });
     } catch (smsError) {
@@ -122,20 +113,13 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
       return;
     }
 
-    if (!servicePrice || advanceAmount <= 0) {
+    if (!servicePrice) {
       setError('Selected service does not have a valid numeric price. Please choose a service with a fixed price.');
       return;
     }
 
     setIsLoading(true);
     setError(null);
-
-    const paymentResult = await simulateAdvancePayment(advanceAmount);
-    if (paymentResult.status !== 'success') {
-      setError('Advance payment failed. Please try again.');
-      setIsLoading(false);
-      return;
-    }
 
     // Prepare data for Supabase table 'appointments'
     const appointmentData = {
@@ -149,9 +133,6 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
       date: selectedDate,
       time: selectedTime,
       total_price: servicePrice,
-      advance_amount: advanceAmount,
-      payment_status: 'success',
-      payment_reference: paymentResult.reference,
       status: 'pending',
     };
 
@@ -198,9 +179,6 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
         clientEmail,
         status: 'pending',
         totalPrice: servicePrice,
-        advanceAmount,
-        paymentStatus: 'success',
-        paymentReference: paymentResult.reference,
         createdAt: (insertedRow.created_at as string) || new Date().toISOString(),
       };
 
@@ -583,12 +561,10 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
                   >
                     {isLoading ? (
                       <>
-                        <span className="animate-spin">⏳</span> Processing Payment...
+                        <span className="animate-spin">⏳</span> Submitting...
                       </>
                     ) : (
-                      <>
-                        Pay {formatCurrency(advanceAmount)} Advance <Sparkles className="w-4 h-4" />
-                      </>
+                      <>Confirm Booking <Sparkles className="w-4 h-4" /></>
                     )}
                   </button>
                 </div>
@@ -693,9 +669,8 @@ export default function BookingForm({ onBookingSuccess, existingBookings, onCanc
                 <div className="flex gap-3 items-start border-t border-white/5 pt-3">
                   <Sparkles className="w-4 h-4 text-primary shrink-0 mt-1" />
                   <div>
-                    <p className="text-[10px] font-mono uppercase tracking-widest text-white/40">Advance Payment</p>
-                    <p className="font-mono text-xs text-white mt-1">Total: {formatCurrency(servicePrice)}</p>
-                    <p className="font-mono text-sm text-primary font-bold">1/3 Advance: {formatCurrency(advanceAmount)}</p>
+                    <p className="text-[10px] font-mono uppercase tracking-widest text-white/40">Total Estimate</p>
+                    <p className="font-mono text-xs text-white mt-1">{formatCurrency(servicePrice)}</p>
                   </div>
                 </div>
               )}
